@@ -2,11 +2,11 @@ import { getErrorResponse } from "@/src/lib/helper/getErrorResponse";
 import { signJWT, verifyJWT } from "@/src/lib/token";
 import { getAuthById } from "@/src/services/auth/getAuthById";
 import { getUserByEmail } from "@/src/services/user/getUserByEmail";
-import { getUserById } from "@/src/services/user/getUserById";
 import { loginSchema } from "@/src/utils/validiation/auth/loginSchema";
 import { compare } from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
+
 export async function GET(req: NextRequest) {
   try {
     const header = req.headers.get("Authorization");
@@ -58,7 +58,12 @@ export async function POST(req: NextRequest) {
         status: 200,
       },
     );
-
+    await response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7,
+    });
     return response;
   } catch (error) {
     if (error instanceof ZodError) {

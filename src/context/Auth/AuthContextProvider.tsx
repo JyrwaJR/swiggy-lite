@@ -15,7 +15,6 @@ export const AuthContextProvider = ({ children, token }: Props) => {
       const res = await axios.get("http://localhost:3000/api/auth", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log(res.data);
       setUser(res.data.data);
     }
   };
@@ -35,8 +34,6 @@ export const AuthContextProvider = ({ children, token }: Props) => {
         login: (email: string, password: string) => {},
       }}
     >
-      {token}
-      <div>{user ? "true" : "false"}</div>
       {children}
     </AuthContext.Provider>
   );
