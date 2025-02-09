@@ -1,0 +1,130 @@
+// This is your Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Roles {
+  ADMIN
+  Customer
+  Delivery
+  Resturant
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+enum DeliveryStatus {
+  PENDING
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+model AuthUser {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  email         String   @unique
+  user_name     String
+  password_hash String
+  user          User?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+}
+
+model User {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  role         Roles       @default(Customer)
+  isActive     Boolean     @default(true)
+  phone_number String      @unique
+  created_at   DateTime?   @default(now())
+  updated_at   DateTime?   @updatedAt
+  resturant    Restaurant?
+  auth_id      String      @unique @db.ObjectId
+  auth         AuthUser    @relation(fields: [auth_id], references: [id])
+}
+
+model Orders {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  customer_id   String      @db.ObjectId
+  restaurant_id String      @db.ObjectId
+  total_amount  Int
+  status        OrderStatus
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+}
+
+model OrderItems {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  item_id    String   @db.ObjectId
+  quantity   Int
+  price      Int
+  order_id   String   @unique @db.ObjectId
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model MenuItems {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  description   String
+  price         Int
+  category      String
+  is_available  Boolean     @default(true)
+  image_url     String
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+  restaurant_id String?     @db.ObjectId
+  restaurant    Restaurant? @relation(fields: [restaurant_id], references: [id])
+}
+
+model Restaurant {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  address     String
+  city        String
+  state       String?
+  country     String
+  postalCode  String?
+  phoneNumber String?
+  logoUrl     String?
+  isActive    Boolean?    @default(true)
+  createdAt   DateTime?   @default(now())
+  updatedAt   DateTime?   @updatedAt
+  user_id     String      @unique @db.ObjectId
+  user        User        @relation(fields: [user_id], references: [id])
+  menuItems   MenuItems[]
+}
+
+model Deliveries {
+  id                 String         @id @default(auto()) @map("_id") @db.ObjectId
+  order_id           String         @db.ObjectId
+  delivery_person_id String         @db.ObjectId
+  delivery_address   String
+  status             DeliveryStatus @default(PENDING)
+  delivered_at       DateTime?
+  created_at         DateTime       @default(now())
+  updated_at         DateTime       @updatedAt
+}
+
+model Reviews {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  customer_id   String   @db.ObjectId
+  restaurant_id String?  @db.ObjectId
+  item_id       String?  @db.ObjectId
+  rating        Int      @default(1)
+  comment       String?
+  user_id       String   @db.ObjectId
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+}
