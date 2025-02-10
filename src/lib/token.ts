@@ -1,15 +1,16 @@
 import { jwtVerify, SignJWT } from "jose";
+import { env } from "../env";
 
-export const signJWT = async (
-  payload: { sub: string },
-  options: { exp: string },
-) => {
+export const signJWT = async (payload: { sub: string }) => {
   try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET_KEY);
+    const JWT_EXPIRES_IN = env.JWT_EXPIRES_IN;
+    const SECRET_KEY = env.JWT_SECRET_KEY;
+    const secret = new TextEncoder().encode(SECRET_KEY);
     const alg = "HS256";
+    const expireAt = `${JWT_EXPIRES_IN}h`;
     return new SignJWT(payload)
       .setProtectedHeader({ alg })
-      .setExpirationTime(options.exp)
+      .setExpirationTime(expireAt)
       .setIssuedAt()
       .setSubject(payload.sub)
       .sign(secret);

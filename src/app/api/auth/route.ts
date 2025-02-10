@@ -45,12 +45,7 @@ export async function POST(req: NextRequest) {
       return getErrorResponse(401, "Invalid email or password");
     }
 
-    const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN as string;
-
-    const token = await signJWT(
-      { sub: user.id },
-      { exp: `${JWT_EXPIRES_IN}h` },
-    );
+    const token = await signJWT({ sub: user.id });
 
     const response = NextResponse.json(
       { success: true, token },
