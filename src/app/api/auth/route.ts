@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
         status: 200,
       },
     );
-    await response.cookies.set("token", token, {
+    response.cookies.set("token", token, {
       httpOnly: true,
       secure: true,
       sameSite: "lax",

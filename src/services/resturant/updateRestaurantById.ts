@@ -1,8 +1,8 @@
 import { prisma } from "@/prisma/client";
-import { ResturantType } from "@utils/validiation/resturant/resturantSchema";
+import { RestaurantType } from "@/src/utils/validiation/resturant/resturantSchema";
 
 type Props = {
-  data: ResturantType;
+  data: RestaurantType;
   id: string;
 };
 

@@ -3,6 +3,10 @@ import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
+    const header = req.headers.get("Authorization");
+    if (!header) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const resturants = await getAllResturant();
     return NextResponse.json({ data: resturants });
   } catch (error) {

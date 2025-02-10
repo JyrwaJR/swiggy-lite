@@ -31,7 +31,9 @@ export const AuthContextProvider = ({ children, token }: Props) => {
     <AuthContext.Provider
       value={{
         user,
-        login: (email: string, password: string) => {},
+        login: (email: string, password: string) => {
+          alert(email + " " + password);
+        },
       }}
     >
       {children}

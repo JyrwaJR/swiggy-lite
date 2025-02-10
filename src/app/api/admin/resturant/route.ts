@@ -6,7 +6,7 @@ import { ZodError } from "zod";
 import { getUserById } from "@/src/services/user/getUserById";
 import { getRestaurantByUserId } from "@/src/services/resturant/getRestaurantByUserId";
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const resturants = await getAllResturant();
     return NextResponse.json({ data: resturants });

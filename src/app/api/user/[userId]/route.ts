@@ -6,21 +6,26 @@ import { NextResponse } from "next/server";
 type Props = { params: Promise<{ userId: string }> };
 export async function GET(req: Request, { params }: Props) {
   try {
+    const header = req.headers.get("Authorization");
+    if (!header) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const id = (await params).userId;
     const user = await getUserById(id);
     if (!user) {
-      return NextResponse.json({
-        error: "User not found",
-        success: false,
-        status: 404,
-      });
+      return NextResponse.json(
+        { error: "User not found", success: false },
+        { status: 404 },
+      );
     }
-    return NextResponse.json({
-      data: user,
-      message: "User found",
-      success: true,
-      status: 200,
-    });
+    return NextResponse.json(
+      {
+        data: user,
+        message: "User found",
+        success: true,
+      },
+      { status: 200 },
+    );
   } catch (error) {
     return NextResponse.json({ error, status: 500, message: "User not found" });
   }
